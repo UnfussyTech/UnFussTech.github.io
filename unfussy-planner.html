@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UnfussyPlanner — Project planning, minus the drama.</title>
+  <meta name="description" content="All the planning your small team actually needs, none of the bloat. $5/person/month. Currently in beta." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #1a1a18;
+      --paper: #f7f5f0;
+      --accent: #2e6b4f;
+      --accent-light: #d6ede3;
+      --mid: #6b6b60;
+      --border: #ddd9d0;
+      --white: #ffffff;
+      --beta: #e8a020;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-brand span { opacity: 0.5; font-weight: 400; font-size: 0.9rem; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--mid);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink) !important;
+      color: var(--paper) !important;
+      padding: 0.5rem 1.1rem;
+      border-radius: 4px;
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+      transition: opacity 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.8 !important; }
+
+    /* BETA BANNER */
+    .beta-banner {
+      background: var(--beta);
+      color: var(--white);
+      text-align: center;
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .beta-banner a { color: var(--white); font-weight: 600; }
+
+    /* HERO */
+    .hero {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1.75rem;
+    }
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--mid);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.8; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      text-decoration: none;
+      font-weight: 400;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--ink); }
+    .hero-note {
+      margin-top: 1.25rem;
+      font-size: 0.825rem;
+      color: var(--mid);
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* SECTION BASE */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .section-body {
+      font-size: 1.05rem;
+      color: var(--mid);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    /* VS SECTION */
+    .vs-section { background: var(--white); }
+    .vs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+    .vs-col {
+      padding: 2rem;
+      background: var(--white);
+    }
+    .vs-col.them { background: #fafaf8; }
+    .vs-col-head {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .vs-col-head.us { color: var(--accent); }
+    .vs-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .vs-item .icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .vs-item.bad { color: var(--mid); }
+    .vs-item.good { color: var(--ink); }
+
+    /* FEATURES */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 3rem;
+      background: var(--border);
+    }
+    .feature-card {
+      background: var(--paper);
+      padding: 2rem;
+    }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+    .feature-title {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .feature-desc { font-size: 0.9rem; color: var(--mid); line-height: 1.6; }
+
+    /* PRICING */
+    .pricing-section { background: var(--ink); color: var(--paper); }
+    .pricing-section .section-label { color: rgba(247,245,240,0.45); }
+    .pricing-section .section-title { color: var(--paper); }
+    .pricing-section .section-title em { color: #7ecfa3; }
+    .pricing-section .section-body { color: rgba(247,245,240,0.6); }
+    .pricing-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 2.5rem;
+      max-width: 440px;
+      margin-top: 3rem;
+    }
+    .price-amount {
+      font-family: 'Lora', serif;
+      font-size: 3.5rem;
+      font-weight: 600;
+      color: var(--paper);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .price-amount sup { font-size: 1.5rem; vertical-align: super; }
+    .price-period { font-size: 0.9rem; color: rgba(247,245,240,0.5); margin-bottom: 2rem; }
+    .price-features { list-style: none; margin-bottom: 2rem; }
+    .price-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(247,245,240,0.85);
+    }
+    .price-features li:last-child { border-bottom: none; }
+    .price-features li .check { color: #7ecfa3; }
+    .btn-light {
+      background: var(--paper);
+      color: var(--ink);
+      padding: 0.8rem 1.75rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-light:hover { opacity: 0.85; }
+    .pricing-note {
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: rgba(247,245,240,0.4);
+    }
+
+    /* BETA SECTION */
+    .beta-section { background: var(--accent-light); }
+    .beta-section .section-title em { color: var(--accent); }
+    .beta-section .section-body { max-width: 620px; }
+    .beta-perks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2.5rem 0;
+    }
+    .beta-perk {
+      background: var(--white);
+      border: 1px solid rgba(46,107,79,0.15);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .beta-perk strong { display: block; font-weight: 500; margin-bottom: 0.2rem; color: var(--ink); }
+    .beta-perk span { color: var(--mid); }
+    .beta-form {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .beta-form input[type="email"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid rgba(46,107,79,0.3);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .beta-form input[type="email"]:focus { border-color: var(--accent); }
+    .beta-form input[type="email"]::placeholder { color: #aaa; }
+    .btn-accent {
+      background: var(--accent);
+      color: var(--white);
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-accent:hover { opacity: 0.85; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.825rem;
+      color: var(--mid);
+    }
+    footer a { color: var(--mid); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+    .footer-brand {
+      font-family: 'Lora', serif;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* FADE IN */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * {
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero > *:nth-child(2) { animation-delay: 0.15s; }
+    .hero > *:nth-child(3) { animation-delay: 0.25s; }
+    .hero > *:nth-child(4) { animation-delay: 0.35s; }
+    .hero > *:nth-child(5) { animation-delay: 0.42s; }
+
+    @media (max-width: 600px) {
+      .vs-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BETA BANNER -->
+  <div class="beta-banner">
+    🌱 UnfussyPlanner is in beta — <a href="#beta">help us make it even less fussy →</a>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="https://unfussy.tech" class="nav-brand">
+      🪶 Unfussy.Tech <span>/ Planner</span>
+    </a>
+    <div class="nav-links">
+      <a href="#why">Why unfussy?</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#beta" class="nav-cta">Join the beta</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">🌱 Now in beta</div>
+    <h1>Project planning,<br /><em>minus the drama.</em></h1>
+    <p class="hero-sub">
+      Project planning built for small teams — fast to learn, honest on price,
+      and designed so your whole team actually uses it.
+    </p>
+    <div class="hero-actions">
+      <a href="mailto:hello@unfussy.com?subject=UnfussyPlanner beta" class="btn-primary">Join the beta</a>
+      <a href="#why" class="btn-secondary">See what makes it different</a>
+    </div>
+    <p class="hero-note">$5 / person / month · No credit card to get started</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- WHY SECTION -->
+  <section class="vs-section" id="why">
+    <div class="container">
+      <p class="section-label">Our approach</p>
+      <h2 class="section-title">Built for teams who just<br /><em>want to get things done.</em></h2>
+      <p class="section-body">
+        Most planning tools are designed to impress in a sales demo.
+        UnfussyPlanner is designed to disappear into your workday —
+        so your team spends time on work, not on the tool.
+      </p>
+
+      <div class="vs-grid">
+        <div class="vs-col them">
+          <div class="vs-col-head">The usual experience</div>
+          <div class="vs-item bad"><span class="icon">⏳</span> Hours of setup before your team can do real work</div>
+          <div class="vs-item bad"><span class="icon">💸</span> Pricing that climbs every time you add a seat or a feature</div>
+          <div class="vs-item bad"><span class="icon">🗺️</span> Dozens of features you'll configure once and never touch again</div>
+          <div class="vs-item bad"><span class="icon">📖</span> Onboarding courses and certification programmes just to assign a task</div>
+          <div class="vs-item bad"><span class="icon">🔒</span> The features you actually want locked behind the most expensive tier</div>
+        </div>
+        <div class="vs-col">
+          <div class="vs-col-head us">The UnfussyPlanner way</div>
+          <div class="vs-item good"><span class="icon">⚡</span> Up and running in under five minutes — seriously</div>
+          <div class="vs-item good"><span class="icon">✅</span> $5 per person per month, everything included</div>
+          <div class="vs-item good"><span class="icon">🎯</span> Just the things a 5–20 person team actually uses every day</div>
+          <div class="vs-item good"><span class="icon">🪶</span> If you need a manual, we haven't done our job</div>
+          <div class="vs-item good"><span class="icon">🔓</span> One plan, all features — no tier maze</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <p class="section-label">What's included</p>
+      <h2 class="section-title">Everything you need.<br /><em>Nothing you don't.</em></h2>
+      <p class="section-body">
+        We picked the features small teams actually use and made each one
+        work beautifully. No half-baked extras to justify a price hike.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <div class="feature-title">Tasks & subtasks</div>
+          <div class="feature-desc">Assign work, set due dates, add context. Everything a task needs, nothing it doesn't.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📌</div>
+          <div class="feature-title">Kanban & list views</div>
+          <div class="feature-desc">See your work the way that suits how you think — board or list, switch any time.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <div class="feature-title">Timeline view</div>
+          <div class="feature-desc">See what's happening when. Simple Gantt-style planning without the complexity.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <div class="feature-title">Task dependencies</div>
+          <div class="feature-desc">Mark what's blocked by what. Keep the work moving in the right order.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📧</div>
+          <div class="feature-title">Email-to-task</div>
+          <div class="feature-desc">Forward any email and it becomes a task. Works with Gmail and Outlook, no setup needed.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <div class="feature-title">Guest access</div>
+          <div class="feature-desc">Invite clients or contractors to specific projects. They see what you want them to see.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔁</div>
+          <div class="feature-title">Recurring tasks</div>
+          <div class="feature-desc">Weekly standups, monthly reports — set them once and forget about it.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Basic automations</div>
+          <div class="feature-desc">Auto-assign, auto-move, auto-notify. The repetitive stuff, handled.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- PRICING -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title">One plan.<br /><em>Everything included.</em></h2>
+      <p class="section-body">
+        No tiers to decode. No features held hostage behind enterprise plans.
+        One honest price that stays flat as your team grows.
+      </p>
+
+      <div class="pricing-card">
+        <div class="price-amount"><sup>$</sup>5</div>
+        <div class="price-period">per person / per month · billed monthly</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Unlimited projects & tasks</li>
+          <li><span class="check">✓</span> All views: list, board, timeline</li>
+          <li><span class="check">✓</span> Task dependencies & recurring tasks</li>
+          <li><span class="check">✓</span> Email-to-task (Gmail + Outlook)</li>
+          <li><span class="check">✓</span> Guest / client access</li>
+          <li><span class="check">✓</span> Automations included</li>
+          <li><span class="check">✓</span> Real human support</li>
+        </ul>
+        <a href="mailto:hello@unfussy.com?subject=UnfussyPlanner beta" class="btn-light">Join the beta — free to start</a>
+        <p class="pricing-note">Beta pricing. Locked in for early members when we launch publicly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA CTA -->
+  <section class="beta-section" id="beta">
+    <div class="container">
+      <p class="section-label">Beta programme</p>
+      <h2 class="section-title">Help us make it<br /><em>even less fussy.</em></h2>
+      <p class="section-body">
+        We're in beta, which means the product is real and working —
+        but we're still listening hard. Beta members shape what we build next.
+        If something feels fussy, we want to know. Your job is to find the friction.
+      </p>
+
+      <div class="beta-perks">
+        <div class="beta-perk">
+          <strong>🔓 Free during beta</strong>
+          <span>Use it at no cost while we're still building. No card needed.</span>
+        </div>
+        <div class="beta-perk">
+          <strong>💬 Direct line to the team</strong>
+          <span>You'll have our email. Real people, fast responses.</span>
+        </div>
+        <div class="beta-perk">
+          <strong>🏷️ Locked-in price</strong>
+          <span>Beta members get $5/person/month locked in when we launch.</span>
+        </div>
+        <div class="beta-perk">
+          <strong>🗳️ Shape what we build</strong>
+          <span>Your feedback goes straight onto the roadmap.</span>
+        </div>
+      </div>
+
+      <p style="font-size:0.95rem; color: var(--mid); margin-bottom: 0.5rem;">Drop us your email and we'll be in touch within a day.</p>
+      <div class="beta-form">
+        <input type="email" placeholder="your@email.com" />
+        <a href="mailto:hello@unfussy.com?subject=UnfussyPlanner beta signup" class="btn-accent">Request beta access</a>
+      </div>
+      <p style="font-size:0.8rem; color: var(--mid); margin-top: 0.75rem;">Or email us directly at <a href="mailto:hello@unfussy.com" style="color:var(--accent)">hello@unfussy.com</a> — just say "Planner beta" in the subject.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <span class="footer-brand">🪶 Unfussy.Tech</span> — technology, minus the drama.
+    </div>
+    <div style="display:flex; gap: 1.5rem; flex-wrap: wrap;">
+      <a href="https://unfussy.tech">Home</a>
+      <a href="mailto:hello@unfussy.com">Contact</a>
+      <a href="mailto:announce@unfussy.tech">Newsletter</a>
+    </div>
+    <div>© 2025 Unfussy.Tech</div>
+  </footer>
+
+</body>
+</html>
