@@ -110,8 +110,49 @@ nav {
 /* Smaller hero variant for content pages */
 .hero.small-hero {
   min-height: auto;
-  padding: 48px 24px 36px;
+  padding: 72px 24px 48px;
   text-align: left;
+}
+.hero.small-hero h1 {
+  margin-bottom: 0.85rem;
+}
+.hero.small-hero p.lead {
+  max-width: 680px;
+  margin-bottom: 0;
+}
+
+.content {
+  display: grid;
+  gap: 1.75rem;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+.content h2 {
+  margin-top: 2.25rem;
+}
+.content h2:first-of-type {
+  margin-top: 0;
+}
+.content p,
+.content ul,
+.content ol,
+.content table {
+  margin-top: 0;
+}
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.75rem;
+}
+.content th,
+.content td {
+  padding: 1rem;
+  border: 1px solid rgba(26,26,24,0.08);
+  text-align: left;
+}
+.content thead th {
+  background: rgba(239,159,39,0.08);
 }
 
 .hero-bg {
