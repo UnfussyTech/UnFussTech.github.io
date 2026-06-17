@@ -107,6 +107,13 @@ nav {
   overflow: hidden;
 }
 
+/* Smaller hero variant for content pages */
+.hero.small-hero {
+  min-height: auto;
+  padding: 48px 24px 36px;
+  text-align: left;
+}
+
 .hero-bg {
   position: absolute;
   inset: 0;

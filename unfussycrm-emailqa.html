@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UnfussyCRM — Data Visibility & Protection Statement</title>
+  <meta name="description" content="What UnfussyCRM can and cannot access, and how data is protected." />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo-wrap" href="/">
+    <svg class="logo-icon" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="104" height="104" rx="28" fill="#FAEEDA"/>
+      <g transform="translate(52,52)">
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#EF9F27"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#FAC775" transform="rotate(45)"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#EF9F27" transform="rotate(90)"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#FAC775" transform="rotate(135)"/>
+      </g>
+    </svg>
+    <span class="logo-text">Unfussy<span class="amber">.Tech</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="/#products">Products</a>
+    <a href="/about.html">About</a>
+    <a href="/unfussy-planner.html#pricing">Pricing</a>
+    <a href="mailto:hello@unfussy.com" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<div class="hero small-hero">
+  <h1>UnfussyCRM — Data Visibility & Protection Statement</h1>
+  <p class="lead">Prepared for prospects and customers. Last updated: June 2026.</p>
+</div>
+
+<main class="container" role="main">
+  <article class="content">
+    <h2>Overview</h2>
+    <p>This document explains exactly what UnfussyCRM (the service operator) can and cannot access from your data, how that data is protected, and what technical and operational controls are in place. We aim to be direct about the limits of our privacy model so you can make an informed decision.</p>
+
+    <h2>What we can see</h2>
+    <p>The following data is stored in plaintext and is accessible to the service operator:</p>
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Your login email address</strong></td><td>Used for account authentication and notifications</td></tr>
+        <tr><td><strong>Organisation and workspace name</strong></td><td>Visible in admin dashboard</td></tr>
+        <tr><td><strong>CRM contact records</strong></td><td>Names, email addresses, company, pipeline stage, tags, last-touch date</td></tr>
+        <tr><td><strong>Email subjects</strong></td><td>Stored unencrypted for fast list rendering</td></tr>
+        <tr><td><strong>Email snippets</strong></td><td>First ~200 characters of each email body, stored unencrypted for inbox list performance</td></tr>
+        <tr><td><strong>Email participant addresses</strong></td><td>From / To / CC / BCC addresses for every synced message</td></tr>
+        <tr><td><strong>Message metadata</strong></td><td>Timestamps (sent, received), direction (inbound/outbound), read status, thread groupings</td></tr>
+        <tr><td><strong>Attachment metadata</strong></td><td>Filename, file size, MIME type — <strong>not</strong> the attachment content</td></tr>
+        <tr><td><strong>Parsed contact signatures</strong></td><td>Structured fields extracted from email signatures (name, title, phone)</td></tr>
+        <tr><td><strong>Activity and touchpoint counts</strong></td><td>How many emails exchanged, meeting notes, stage changes</td></tr>
+        <tr><td><strong>Storage and usage metrics</strong></td><td>Per-workspace email count, contact count, storage volume</td></tr>
+        <tr><td><strong>Billing and subscription status</strong></td><td>Stripe plan and status</td></tr>
+      </tbody>
+    </table>
+
+    <h2>What we cannot easily see</h2>
+    <p>The following data is encrypted before being written to the database. It is not readable from a database dump or direct database access without additional server-side access:</p>
+
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Encryption</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Email body text</strong></td><td>XChaCha20-Poly1305, per-user key</td></tr>
+        <tr><td><strong>Email body HTML</strong></td><td>XChaCha20-Poly1305, per-user key</td></tr>
+        <tr><td><strong>Email headers</strong></td><td>XChaCha20-Poly1305, per-user key (stored for threading and compliance replay)</td></tr>
+        <tr><td><strong>OAuth access and refresh tokens</strong></td><td>XChaCha20-Poly1305, server key</td></tr>
+        <tr><td><strong>IMAP / SMTP credentials</strong></td><td>XChaCha20-Poly1305, server key</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Important caveat:</strong> This is encryption-at-rest, not zero-knowledge encryption. The key management model is described in the next section. A determined operator with server access could technically decrypt this data.</p>
+
+    <h2>How encryption works</h2>
+    <h3>Key hierarchy</h3>
+    <p>UnfussyCRM uses a two-tier key model:</p>
+    <ol>
+      <li><strong>Key Encryption Key (KEK)</strong> — A single 32-byte random key held only as an environment variable on the API and mail-sync servers. It is never written to the database. It is used to wrap per-user keys and to encrypt OAuth credentials directly.</li>
+      <li><strong>Per-user Data Encryption Key (DEK)</strong> — A unique 32-byte random key generated the first time you connect an email account. Your DEK is stored in the database only in its wrapped (encrypted) form, protected by the KEK. The plaintext DEK exists only in server memory during active request handling.</li>
+    </ol>
+
+    <h3>Encryption algorithm</h3>
+    <p>All content encryption uses <strong>XChaCha20-Poly1305</strong> (via libsodium). Each encrypted value includes a random nonce, so no two ciphertexts are alike even for identical inputs.</p>
+
+    <h3>What this protects against</h3>
+    <table>
+      <thead>
+        <tr><th>Threat</th><th>Protected?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Database breach (attacker gets a database dump)</td><td><strong>Yes</strong> — email bodies, headers, and credentials are ciphertext without the KEK</td></tr>
+        <tr><td>Compromised backup</td><td><strong>Yes</strong> — same as above</td></tr>
+        <tr><td>Insider threat (rogue employee with DB access only)</td><td><strong>Yes</strong> — they cannot read email bodies without the KEK</td></tr>
+        <tr><td>Insider threat (full server access, including env vars)</td><td><strong>No</strong> — the KEK is accessible to someone with server-level access</td></tr>
+        <tr><td>Subpoena for database contents</td><td><strong>Partial</strong> — metadata and subjects would be disclosed; encrypted bodies would require also disclosing the KEK</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Body storage policy</h2>
+    <p>We apply a hybrid storage model to minimise unnecessary data retention:</p>
+    <ul>
+      <li><strong>Gmail and Microsoft — emails from or to a known CRM contact:</strong> Body text is encrypted and stored in the database for immediate access.</li>
+      <li><strong>Gmail and Microsoft — emails from unknown senders (non-contacts):</strong> Only the subject and 200-character snippet are stored. The full body is <strong>never proactively stored</strong>. It is fetched on-demand from Gmail or Microsoft Graph only when you explicitly open the message, then encrypted and stored at that point.</li>
+      <li><strong>IMAP accounts:</strong> Body text for all messages is encrypted and stored, regardless of whether the sender is a CRM contact. This is a limitation of the IMAP protocol — there is no equivalent on-demand fetch mechanism once the live connection closes.</li>
+      <li><strong>HTML email bodies:</strong> HTML is never stored for Gmail or IMAP — only plain text. For Microsoft, the HTML body is stored encrypted when no plain-text version is available.</li>
+      <li><strong>Attachment content:</strong> Never stored. Attachment binaries remain at the mail provider.</li>
+    </ul>
+
+    <h2>What we do with your data</h2>
+    <ul>
+      <li><strong>We do not sell your data</strong> to any third party.</li>
+      <li><strong>AI features</strong> (reply drafting, contact enrichment) use Anthropic's API. Only the specific text submitted for a request is sent; we do not batch-send your entire email history. Anthropic's data handling is governed by their API terms.</li>
+      <li><strong>Your email credentials</strong> (OAuth tokens) are used solely to sync your mail. They are not used for any other purpose and are not shared.</li>
+      <li><strong>Operational staff</strong> do not routinely access customer email content. The admin dashboard exposes usage metrics (counts, storage volumes) only — not message content.</li>
+    </ul>
+
+    <h2>Data hosting and infrastructure</h2>
+    <p>Database, API, and mail-sync services run on infrastructure you control when self-hosted, or on dedicated cloud instances for managed deployments. Database backups are encrypted at rest. All API traffic is TLS 1.2+ in transit. The database is not publicly accessible; it is reachable only from within the private network.</p>
+
+    <h2>Data retention and deletion</h2>
+    <ul>
+      <li><strong>Email data:</strong> Configurable per workspace. Older raw messages can be purged on demand via the admin dashboard. Retention policy defaults to 365 days.</li>
+      <li><strong>Account deletion:</strong> Removing your email account connection deletes OAuth credentials immediately. Synced message rows are soft-deleted; a hard purge can be triggered by a workspace admin.</li>
+      <li><strong>Workspace deletion:</strong> A full workspace delete removes all associated contacts, messages, touchpoints, and users from the database.</li>
+    </ul>
+
+    <h2>Your controls</h2>
+    <p>As a workspace administrator you can:</p>
+    <ul>
+      <li>Purge email records older than a configurable number of days</li>
+      <li>Purge touchpoints while retaining the CRM contact record</li>
+      <li>Disconnect email accounts (revokes stored credentials)</li>
+      <li>Export contact and activity data via the API</li>
+      <li>Delete the workspace entirely, removing all data</li>
+    </ul>
+
+    <h2>Summary</h2>
+    <table>
+      <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+      <tbody>
+        <tr><td>Can you read my email bodies?</td><td>Technically yes, if someone has both DB access and server env access. From DB alone: no.</td></tr>
+        <tr><td>Are my email credentials safe if the DB is leaked?</td><td>Yes — credentials are encrypted and unreadable without the server key.</td></tr>
+        <tr><td>Do you use my emails to train AI?</td><td>No. AI requests are per-action and use Anthropic's API under their data terms.</td></tr>
+        <tr><td>Is this zero-knowledge?</td><td>No. The encryption key is server-side. This is strong encryption-at-rest, not end-to-end.</td></tr>
+        <tr><td>Who controls my data retention?</td><td>You do — configurable per workspace, with on-demand purge.</td></tr>
+      </tbody>
+    </table>
+
+    <p>If you have questions about a specific data handling scenario, please contact us directly.</p>
+  </article>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div><span class="footer-brand">Unfussy<span class="amber">.Tech</span></span> — technology, minus the drama.</div>
+  <div class="footer-links">
+    <a href="/about.html">About</a>
+    <a href="/unfussy-planner.html">UnfussyPlanner</a>
+    <a href="/unfussy-crm.html">UnfussyCRM</a>
+    <a href="/unfussycrm-emailqa.html">Data visibility</a>
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="mailto:hello@unfussy.com">Contact</a>
+    <a href="mailto:announce@unfussy.tech">Newsletter</a>
+  </div>
+  <div>© 2026 Unfussy.Tech</div>
+</footer>
+
+</body>
+</html>
