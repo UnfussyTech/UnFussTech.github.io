@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>How to add to-dos and birthdays — Unfussy.Tech</title>
+  <meta name="description" content="A quick guide to adding to-dos and birthdays to a contact and viewing reminders in the Today view." />
+  <meta property="og:description" content="A quick guide to adding to-dos and birthdays to a contact and viewing reminders in the Today view." />
+  <meta property="og:title" content="How to add to-dos and birthdays — Unfussy.Tech" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="canonical" href="https://unfussy.tech/how-to-add-todos-and-birthdays.html" />
+  <style>
+    .guide-hero {
+      padding: 96px 24px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .guide-hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% 100%, rgba(239,159,39,0.09) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 10%, rgba(250,199,117,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .guide-hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2.1rem, 5vw, 3.3rem);
+      font-weight: 600;
+      line-height: 1.18;
+      max-width: 760px;
+      margin: 0 auto 1rem;
+      color: var(--dark);
+    }
+    .guide-hero h1 em { font-style: italic; color: var(--amber); }
+    .guide-hero p.lead {
+      font-size: 1.05rem;
+      color: var(--mid);
+      max-width: 640px;
+      margin: 0 auto;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+
+    .guide-body {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    .guide-card {
+      background: var(--white);
+      border: 1px solid rgba(239,159,39,0.16);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .guide-card h2 {
+      font-size: clamp(1.4rem, 2.3vw, 1.8rem);
+      margin-bottom: 0.8rem;
+    }
+
+    .guide-card p,
+    .guide-card li {
+      font-size: 1rem;
+      color: var(--mid);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    .guide-card ul {
+      padding-left: 1.2rem;
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .guide-image {
+      margin-top: 1.25rem;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(239,159,39,0.16);
+      background: var(--bg);
+    }
+
+    .guide-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .guide-caption {
+      font-size: 0.9rem;
+      color: var(--soft);
+      padding: 0.9rem 1rem 0;
+    }
+
+    .note-box {
+      background: var(--amber-light);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 14px 14px 0;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: var(--mid);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 700px) {
+      .guide-hero { padding: 80px 20px 50px; }
+      .guide-body { padding: 0 20px 80px; }
+      .guide-card { padding: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo-wrap" href="/">
+    <svg class="logo-icon" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="104" height="104" rx="28" fill="#FAEEDA"/>
+      <g transform="translate(52,52)">
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#EF9F27"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#FAC775" transform="rotate(45)"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#EF9F27" transform="rotate(90)"/>
+        <path d="M0,-34 C3,-16 3,-7 0,34 C-3,-7 -3,-16 0,-34Z" fill="#FAC775" transform="rotate(135)"/>
+      </g>
+    </svg>
+    <span class="logo-text">Unfussy<span class="amber">.Tech</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="/#products">Products</a>
+    <a href="/about.html">About</a>
+    <a href="/unfussy-planner.html#pricing">Pricing</a>
+    <a href="mailto:hello@unfussy.com" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="guide-hero">
+  <div class="guide-hero-bg"></div>
+  <span class="section-label">Quick guide</span>
+  <h1>How to add <em>to-dos and birthdays</em></h1>
+  <p class="lead">Keep reminders tied to the right person so nothing slips through the cracks.</p>
+</div>
+
+<hr class="divider" />
+
+<div class="guide-body">
+  <div class="guide-card">
+    <span class="section-label">Step 1</span>
+    <h2>Open the contact you want to connect to the reminder</h2>
+    <p>At the top, click on Pipeline &gt; Contacts &gt; The name of the person you want associated with the to-do.</p>
+    <div class="note-box">
+      This same flow works well for birthdays, follow-ups, and other important reminders that should stay attached to a specific contact.
+    </div>
+  </div>
+
+  <div class="guide-card">
+    <span class="section-label">Step 2</span>
+    <h2>Add the to-do from the right-hand side</h2>
+    <p>On the right, you can see where to add the to-do. Use that area to create a reminder for the contact and keep the task tied to their record.</p>
+    <div class="guide-image">
+      <img src="/img/Adding to-dos.png" alt="Screen showing where to add a to-do in the contact view" />
+    </div>
+    <p class="guide-caption">Adding to-dos</p>
+  </div>
+
+  <div class="guide-card">
+    <span class="section-label">Step 3</span>
+    <h2>View your reminders in Today</h2>
+    <p>If you click “Today” on the left side of the board, you will see all your current and upcoming reminders in one place.</p>
+    <div class="guide-image">
+      <img src="/img/Reminders.png" alt="Screen showing the Today view with reminders" />
+    </div>
+    <p class="guide-caption">Reminders</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div><span class="footer-brand">Unfussy<span class="amber">.Tech</span></span> — technology, minus the drama.</div>
+  <div class="footer-links">
+    <a href="/about.html">About</a>
+    <a href="/unfussy-planner.html">UnfussyPlanner</a>
+    <a href="/unfussy-crm.html">UnfussyCRM</a>
+    <a href="/unfussycrm-emailqa.html">Data visibility</a>
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="mailto:hello@unfussy.com">Contact</a>
+  </div>
+  <div>© 2026 Unfussy.Tech</div>
+</footer>
+
+</body>
+</html>
